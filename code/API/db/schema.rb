@@ -1,11 +1,3 @@
-#---
-# Excerpted from "Seven Mobile Apps in Seven Weeks",
-# published by The Pragmatic Bookshelf.
-# Copyrights apply to this code. It may not be used to create training material,
-# courses, books, articles, and the like. Contact us if you are in doubt.
-# We make no guarantees that this code is fit for any purpose.
-# Visit http://www.pragmaticprogrammer.com/titles/7apps for more book information.
-#---
 # encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
@@ -32,8 +24,8 @@ ActiveRecord::Schema.define(version: 20151225223147) do
   end
 
   create_table "todos", force: :cascade do |t|
-    t.string   "title",      limit: 255
-    t.boolean  "complete",               default: false
+    t.string   "title"
+    t.boolean  "complete",   default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
