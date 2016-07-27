@@ -20,12 +20,11 @@
 
 
     initialize: function() {
+      timeZoneManager.initialize();
+      zoneList.hide();
       this.configureListeners();
       this.refreshClockList();
-      zoneList.hide();
       clock.start();
-
-      timeZoneManager.fetchTimeZones();
     },
 
     configureListeners : function() {

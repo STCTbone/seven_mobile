@@ -12,17 +12,61 @@
 
     savedTimeZones : [],
 
+    initialize : function() {
+      this.loadSavedTimeZones();
+      if (!navigator.onLine) {
+        this.loadLocalTimeZones();
+      } else {
+        var completion = _.bind(function(zones) {
+          this.storeTimeZonesLocally(zones);
+        }, this);
+        this.fetchTimeZones(completion);
+      }
+    },
+
     fetchTimeZones : function(completion) {
       var successFunction = _.bind(function(data) {
-          this.timeZones = data;
-          if (completion) completion(data);
-        }, this);
+        this.zonesLoaded(data);
+        if (completion) completion(data);
+      }, this);
+      var errorFunction = _.bind(function() {
+        this.loadLocalTimeZones();
+      }, this);
 
       $.ajax({
         url     : "http://localhost:3000/clock/time_zones",
         headers : { Accept: "application/json" },
-        success : successFunction
+        success : successFunction,
+        error   : errorFunction
       });
+    },
+
+    loadSavedTimeZones : function(){
+      var localSavedZones = localStorage.savedTimeZones;
+      if (localSavedZones) {
+        this.savedTimeZones = JSON.parse(localSavedZones);
+      }
+    },
+
+    storeSavedTimeZonesLocally : function() {
+      localStorage.savedTimeZones = JSON.stringify(this.savedTimeZones);
+    },
+
+    loadLocalTimeZones : function() {
+      var localZones = localStorage.allTimeZones;
+      if (localZones) {
+        this.zonesLoaded(JSON.parse(localZones));
+      } else {
+        // Inform user that no timezone data is available
+      }
+    },
+
+    storeTimeZonesLocally : function(zones) {
+      localStorage.allTimeZones = JSON.stringify(zones);
+    },
+
+    zonesLoaded : function(zones) {
+      this.timeZones = zones;
     },
 
     allZones : function() {
@@ -32,10 +76,12 @@
     saveZoneAtIndex : function(index) {
       var zone = this.timeZones[index];
       this.savedTimeZones.push(zone);
+      this.storeSavedTimeZonesLocally();
     },
 
     deleteZoneAtIndex : function(index) {
       this.savedTimeZones.splice(index, 1);
+      this.storeSavedTimeZonesLocally();
     },
 
     savedZones : function(includeCurrent) {
